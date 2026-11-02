@@ -73,7 +73,8 @@ int sow_seeds(Game *game, int house){
     for (int i = 0; i < seeds; i++) {
         pos = (house + i) % 12;
         if (pos == house) continue;
-        game->houses[house+i] += 1;
+        game->houses[pos] += 1;
+        seeds--;
     }
     return pos;
 }
@@ -89,7 +90,7 @@ int capture(Game *game, int last){
     if (potential_capture == count_side_seeds(game, opponent)){
         return 0;
     }
-    for (int i = pos + 1; i < last; i++) {
+    for (int i = pos + 1; i <= last; i++) {
         game->houses[i] = 0;
     }
 
@@ -153,9 +154,39 @@ void print_board(Game *game) {
         }
     }
 }
-int main() {
-    Game *game;
-    game_init(game, 0);
-    print_board(game);
+
+int main(void) {
+    Game game;
+    game_init(&game, 0);
+
+    while (game.status == GAME_ONGOING) {
+        print_board(&game);
+
+        int house;
+        printf("\nPlayer %d, choose house (-1 to quit): ",
+               game.current_player);
+
+        if (scanf("%d", &house) != 1 || house == -1)
+            break;
+
+        GameResult result = make_move(&game, house);
+
+        if (result == INVALID) {
+            printf("Invalid move! Try again.\n");
+            continue;
+        }
+
+        if (result != GAME_ONGOING) {
+            print_board(&game);
+
+            if (result == GAME_DRAW)
+                printf("\nDRAW!\n");
+            else
+                printf("\nPLAYER %d WINS!\n",
+                       result == GAME_PLAYER0_WIN ? 0 : 1);
+        }
+    }
+
     return 0;
 }
+
