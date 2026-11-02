@@ -1,21 +1,8 @@
 #include <stdio.h>
+#include "game.h"
 
-typedef enum {
-    GAME_ONGOING = 0,
-    GAME_PLAYER0_WIN = 1,
-    GAME_PLAYER1_WIN = 2,
-    GAME_DRAW = 3,
-    INVALID = 4
-} GameResult;
 
-typedef struct game{
-    int houses[12];
-    int scores[2];
-    int current_player;
-    GameResult status;
-    int winner; //player 0 ,1. 2 if draw
-    int move_count;
-} Game;
+
 
 void game_init(Game *game, int starting_player){
     for (int i = 0; i < 12; i++) {
@@ -24,7 +11,6 @@ void game_init(Game *game, int starting_player){
     for (int i = 0; i < 2; i++) {
         game->scores[i] = 0;
     }
-    game->winner = 0;
     game->status = GAME_ONGOING;
     game->move_count = 0;
     game->current_player = starting_player;
@@ -146,7 +132,7 @@ GameResult make_move(Game *game, int house) {
 
 
 }
-void print_board(Game *game) {
+void print_board(const Game *game) {
     for (int i = 0; i < 12; i++) {
         printf("%d ", game->houses[i]);
         if (i == 5) {
